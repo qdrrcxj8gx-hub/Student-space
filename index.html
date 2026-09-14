@@ -1,0 +1,2702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Space</title>
+
+<style>
+:root {
+    --bg:#eef3ff;
+    --text:#182033;
+    --muted:#69738a;
+    --glass:rgba(255,255,255,.55);
+    --glass-strong:rgba(255,255,255,.75);
+    --border:rgba(255,255,255,.75);
+
+    --purple:#8b5cf6;
+    --cyan:#22d3ee;
+    --pink:#f472b6;
+    --green:#34d399;
+    --red:#fb7185;
+
+    --shadow:0 20px 60px rgba(74,85,120,.16);
+}
+
+* {
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body {
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    min-height:100vh;
+    color:var(--text);
+
+    background:
+        radial-gradient(circle at 15% 15%,rgba(139,92,246,.22),transparent 28%),
+        radial-gradient(circle at 85% 20%,rgba(34,211,238,.18),transparent 25%),
+        radial-gradient(circle at 50% 90%,rgba(244,114,182,.16),transparent 30%),
+        var(--bg);
+
+    overflow-x:hidden;
+    transition:.4s ease;
+}
+
+body.dark {
+    --bg:#0c1020;
+    --text:#f5f7ff;
+    --muted:#9ca6bd;
+    --glass:rgba(20,25,45,.55);
+    --glass-strong:rgba(25,30,52,.75);
+    --border:rgba(255,255,255,.1);
+
+    background:
+        radial-gradient(circle at 15% 15%,rgba(139,92,246,.18),transparent 28%),
+        radial-gradient(circle at 85% 20%,rgba(34,211,238,.12),transparent 25%),
+        radial-gradient(circle at 50% 90%,rgba(244,114,182,.10),transparent 30%),
+        var(--bg);
+}
+
+/* Clouds */
+
+.cloud {
+    position:fixed;
+    border-radius:50%;
+    filter:blur(70px);
+    opacity:.45;
+    pointer-events:none;
+    z-index:-1;
+    animation:floating 14s ease-in-out infinite alternate;
+}
+
+.cloud.one {
+    width:300px;
+    height:220px;
+    background:#b8a0ff;
+    top:5%;
+    left:-100px;
+}
+
+.cloud.two {
+    width:330px;
+    height:250px;
+    background:#7de9f5;
+    top:40%;
+    right:-120px;
+    animation-delay:-4s;
+}
+
+.cloud.three {
+    width:280px;
+    height:220px;
+    background:#ffb0d9;
+    bottom:-100px;
+    left:35%;
+    animation-delay:-8s;
+}
+
+@keyframes floating {
+    from {transform:translate(0,0) scale(1)}
+    to {transform:translate(35px,-25px) scale(1.08)}
+}
+
+/* Layout */
+
+.container {
+    width:min(1200px,calc(100% - 32px));
+    margin:auto;
+    padding:35px 0 70px;
+}
+
+header {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:25px;
+}
+
+.brand {
+    display:flex;
+    align-items:center;
+    gap:13px;
+}
+
+.brand-icon {
+    width:50px;
+    height:50px;
+    border-radius:17px;
+    display:grid;
+    place-items:center;
+    background:linear-gradient(135deg,var(--purple),var(--cyan));
+    color:white;
+    box-shadow:0 10px 30px rgba(139,92,246,.28);
+}
+
+.brand-icon svg {
+    width:25px;
+}
+
+h1 {
+    font-size:27px;
+    letter-spacing:-.7px;
+}
+
+.subtitle {
+    color:var(--muted);
+    font-size:13px;
+    margin-top:2px;
+}
+
+.grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+.card {
+    background:var(--glass);
+    border:1px solid var(--border);
+    backdrop-filter:blur(28px) saturate(140%);
+    -webkit-backdrop-filter:blur(28px) saturate(140%);
+    border-radius:28px;
+    padding:23px;
+    box-shadow:var(--shadow);
+    transition:.25s ease;
+}
+
+.card:hover {
+    transform:translateY(-3px);
+    box-shadow:0 25px 70px rgba(74,85,120,.20);
+}
+
+.card.full {
+    grid-column:1/-1;
+}
+
+.card-title {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:17px;
+}
+
+.title-left {
+    display:flex;
+    align-items:center;
+    gap:11px;
+}
+
+.title-icon {
+    width:37px;
+    height:37px;
+    border-radius:13px;
+    display:grid;
+    place-items:center;
+    background:rgba(139,92,246,.12);
+    color:var(--purple);
+}
+
+.title-icon svg {
+    width:19px;
+}
+
+h2 {
+    font-size:17px;
+}
+
+.small {
+    font-size:12px;
+    color:var(--muted);
+}
+
+/* Buttons */
+
+button {
+    border:none;
+    font-family:inherit;
+    cursor:pointer;
+    color:inherit;
+}
+
+.btn {
+    border-radius:13px;
+    padding:9px 13px;
+    font-size:12px;
+    background:rgba(255,255,255,.38);
+    border:1px solid var(--border);
+    transition:
+        transform .18s ease,
+        box-shadow .18s ease,
+        background .18s ease;
+}
+
+.dark .btn {
+    background:rgba(255,255,255,.06);
+}
+
+.btn:hover {
+    transform:translateY(-2px);
+    background:var(--glass-strong);
+    box-shadow:0 8px 22px rgba(70,80,110,.15);
+}
+
+.btn:active {
+    transform:scale(.95);
+}
+
+.btn.primary {
+    color:white;
+    background:linear-gradient(135deg,var(--purple),#6d5dfc);
+    border:none;
+    box-shadow:0 8px 20px rgba(139,92,246,.22);
+}
+
+.btn.primary:hover {
+    box-shadow:0 12px 28px rgba(139,92,246,.38);
+}
+
+.btn.danger {
+    color:var(--red);
+}
+
+/* Inputs */
+
+input,
+textarea,
+select {
+    width:100%;
+    border:1px solid var(--border);
+    background:rgba(255,255,255,.38);
+    color:var(--text);
+    border-radius:13px;
+    padding:11px 13px;
+    outline:none;
+    font-family:inherit;
+    transition:.2s ease;
+}
+
+.dark input,
+.dark textarea,
+.dark select {
+    background:rgba(255,255,255,.06);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color:#a78bfa;
+    box-shadow:0 0 0 3px rgba(139,92,246,.10);
+}
+
+textarea {
+    resize:vertical;
+    min-height:120px;
+}
+
+.form-row {
+    display:flex;
+    gap:9px;
+}
+
+/* Subjects */
+
+.subject-list {
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+}
+
+.subject {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:12px 14px;
+    border-radius:17px;
+    background:rgba(255,255,255,.28);
+    border:1px solid var(--border);
+    transition:.2s ease;
+}
+
+.dark .subject {
+    background:rgba(255,255,255,.045);
+}
+
+.subject:hover {
+    transform:translateX(3px);
+}
+
+.subject-name {
+    font-size:14px;
+}
+
+.subject-actions {
+    display:flex;
+    gap:6px;
+}
+
+/* Deadlines */
+
+.deadline-form {
+    display:grid;
+    grid-template-columns:1fr 160px auto;
+    gap:9px;
+    margin-bottom:15px;
+}
+
+.deadline-list {
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+}
+
+.deadline {
+    display:flex;
+    align-items:center;
+    gap:11px;
+    padding:13px 14px;
+    border-radius:17px;
+    background:rgba(255,255,255,.28);
+    border:1px solid var(--border);
+    transition:.2s ease;
+}
+
+.dark .deadline {
+    background:rgba(255,255,255,.045);
+}
+
+.deadline:hover {
+    transform:translateX(3px);
+}
+
+.deadline-check {
+    width:19px;
+    height:19px;
+    accent-color:var(--purple);
+    cursor:pointer;
+}
+
+.deadline-info {
+    flex:1;
+}
+
+.deadline-name {
+    font-size:14px;
+}
+
+.deadline-date {
+    font-size:11px;
+    color:var(--muted);
+    margin-top:3px;
+}
+
+.deadline-status {
+    font-size:11px;
+    padding:5px 8px;
+    border-radius:9px;
+    background:rgba(139,92,246,.10);
+    color:var(--purple);
+}
+
+.deadline-status.today {
+    background:rgba(251,113,133,.12);
+    color:var(--red);
+}
+
+.deadline-status.done {
+    background:rgba(52,211,153,.12);
+    color:var(--green);
+}
+
+.deadline-status.overdue {
+    background:rgba(251,113,133,.15);
+    color:var(--red);
+}
+
+.completed .deadline-name {
+    text-decoration:line-through;
+    opacity:.5;
+}
+
+/* Timer */
+
+.timer-box {
+    text-align:center;
+    padding:10px 0 3px;
+}
+
+#time {
+    font-size:65px;
+    font-weight:700;
+    letter-spacing:-3px;
+    margin:5px 0 18px;
+}
+
+.timer-controls {
+    display:flex;
+    justify-content:center;
+    gap:8px;
+}
+
+.timer-settings {
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    margin-top:15px;
+}
+
+.timer-settings input {
+    width:120px;
+}
+
+/* Music */
+
+.music-player {
+    padding:15px;
+    border-radius:20px;
+    background:rgba(255,255,255,.25);
+    border:1px solid var(--border);
+}
+
+.dark .music-player {
+    background:rgba(255,255,255,.04);
+}
+
+.music-main {
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.music-art {
+    width:48px;
+    height:48px;
+    border-radius:15px;
+    display:grid;
+    place-items:center;
+    color:white;
+    background:linear-gradient(135deg,#8b5cf6,#22d3ee);
+    flex-shrink:0;
+}
+
+.music-art.playing {
+    animation:musicPulse 2s infinite ease-in-out;
+}
+
+@keyframes musicPulse {
+    0%,100% {transform:scale(1)}
+    50% {transform:scale(1.07)}
+}
+
+.music-info {
+    flex:1;
+}
+
+.music-name {
+    font-size:14px;
+    font-weight:600;
+}
+
+.music-desc {
+    color:var(--muted);
+    font-size:11px;
+    margin-top:3px;
+}
+
+.music-controls {
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.icon-btn {
+    width:35px;
+    height:35px;
+    border-radius:12px;
+    display:grid;
+    place-items:center;
+    background:rgba(255,255,255,.35);
+    border:1px solid var(--border);
+    transition:.18s ease;
+}
+
+.dark .icon-btn {
+    background:rgba(255,255,255,.06);
+}
+
+.icon-btn:hover {
+    transform:translateY(-2px) scale(1.03);
+    box-shadow:0 7px 18px rgba(80,90,120,.15);
+}
+
+.icon-btn:active {
+    transform:scale(.91);
+}
+
+.volume {
+    margin-top:13px;
+}
+
+.volume input {
+    padding:0;
+    accent-color:var(--purple);
+}
+
+/* Notes */
+
+.notes-toolbar {
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:15px;
+}
+
+.notes-grid {
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:13px;
+}
+
+/*
+    NOTE:
+    The note is now a "canvas".
+    Images can move anywhere inside it.
+*/
+
+.note {
+    position:relative;
+    min-height:300px;
+    padding:17px;
+    border-radius:20px;
+    background:rgba(255,255,255,.30);
+    border:1px solid var(--border);
+    overflow:hidden;
+    transition:.2s ease;
+}
+
+.dark .note {
+    background:rgba(255,255,255,.045);
+}
+
+.note:hover {
+    transform:translateY(-2px);
+}
+
+.note-header {
+    display:flex;
+    align-items:center;
+    gap:8px;
+    position:relative;
+    z-index:10;
+}
+
+.note-title {
+    flex:1;
+    font-weight:650;
+    font-size:14px;
+    background:transparent;
+    border:none;
+    padding:4px;
+}
+
+.note-text {
+    position:relative;
+    z-index:5;
+    min-height:170px;
+    background:transparent;
+    border:none;
+    padding:8px 5px;
+    line-height:1.5;
+    resize:none;
+}
+
+.note-drop {
+    position:absolute;
+    left:17px;
+    right:17px;
+    bottom:17px;
+    min-height:55px;
+    border:1.5px dashed rgba(139,92,246,.35);
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    color:var(--muted);
+    font-size:11px;
+    padding:8px;
+    transition:.2s ease;
+    z-index:2;
+}
+
+.note-drop.dragover {
+    background:rgba(139,92,246,.12);
+    border-color:var(--purple);
+}
+
+.note-file {
+    display:none;
+}
+
+/*
+    FREE IMAGE
+*/
+
+.note-image-wrap {
+    position:absolute;
+    width:150px;
+    min-width:60px;
+    max-width:70%;
+    cursor:grab;
+    z-index:8;
+    user-select:none;
+    touch-action:none;
+}
+
+.note-image-wrap:active {
+    cursor:grabbing;
+}
+
+.note-image {
+    display:block;
+    width:100%;
+    max-height:220px;
+    object-fit:contain;
+    border-radius:13px;
+    box-shadow:0 12px 30px rgba(30,40,70,.22);
+    pointer-events:none;
+}
+
+.image-delete {
+    position:absolute;
+    top:-8px;
+    right:-8px;
+    width:25px;
+    height:25px;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    background:rgba(20,25,40,.8);
+    color:white;
+    font-size:14px;
+    opacity:0;
+    transition:.2s ease;
+    z-index:20;
+}
+
+.note-image-wrap:hover .image-delete {
+    opacity:1;
+}
+
+.image-hint {
+    position:absolute;
+    left:8px;
+    bottom:8px;
+    background:rgba(15,20,35,.65);
+    color:white;
+    padding:4px 7px;
+    border-radius:7px;
+    font-size:9px;
+    opacity:0;
+    transition:.2s ease;
+    pointer-events:none;
+}
+
+.note-image-wrap:hover .image-hint {
+    opacity:1;
+}
+
+.empty {
+    color:var(--muted);
+    font-size:12px;
+    text-align:center;
+    padding:15px;
+}
+
+/* Timer finished animation */
+
+.timer-finished #time {
+    animation:timerFinished .7s ease-in-out 3;
+}
+
+@keyframes timerFinished {
+    0%,100% {transform:scale(1)}
+    50% {transform:scale(1.08)}
+}
+
+/* Responsive */
+
+@media(max-width:850px) {
+
+    .grid {
+        grid-template-columns:1fr;
+    }
+
+    .card.full {
+        grid-column:auto;
+    }
+
+    .deadline-form {
+        grid-template-columns:1fr;
+    }
+
+    .notes-grid {
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:600px) {
+
+    .container {
+        width:min(100% - 20px,1200px);
+        padding-top:20px;
+    }
+
+    header {
+        align-items:flex-start;
+        flex-direction:column;
+        gap:15px;
+    }
+
+    .card {
+        padding:17px;
+        border-radius:22px;
+    }
+
+    #time {
+        font-size:52px;
+    }
+
+    .subject {
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    .subject-actions {
+        width:100%;
+    }
+
+    .subject-actions button {
+        flex:1;
+    }
+
+    .music-main {
+        flex-wrap:wrap;
+    }
+
+    .music-controls {
+        width:100%;
+        justify-content:flex-end;
+    }
+
+    .deadline {
+        align-items:flex-start;
+    }
+
+    .deadline-status {
+        display:none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="cloud one"></div>
+<div class="cloud two"></div>
+<div class="cloud three"></div>
+
+<div class="container">
+
+<header>
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            <svg viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/>
+            </svg>
+        </div>
+
+        <div>
+            <h1>Student Space</h1>
+            <div class="subtitle">
+                study smarter · учись спокойнее
+            </div>
+        </div>
+
+    </div>
+
+    <button class="btn" id="themeBtn" onclick="toggleTheme()">
+        <span id="themeIcon">☾</span>
+        <span id="themeText">Dark mode</span>
+    </button>
+
+</header>
+
+
+<div class="grid">
+
+
+<!-- SUBJECTS -->
+
+<section class="card">
+
+    <div class="card-title">
+
+        <div class="title-left">
+
+            <div class="title-icon">
+                📚
+            </div>
+
+            <div>
+                <h2>Subjects</h2>
+                <div class="small">предметы</div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="form-row">
+
+        <input
+            id="subjectInput"
+            placeholder="New subject..."
+        >
+
+        <button
+            class="btn primary"
+            onclick="addSubject()"
+        >
+            + Add
+        </button>
+
+    </div>
+
+    <br>
+
+    <div
+        class="subject-list"
+        id="subjectList"
+    ></div>
+
+</section>
+
+
+<!-- DEADLINES -->
+
+<section class="card">
+
+    <div class="card-title">
+
+        <div class="title-left">
+
+            <div class="title-icon">
+                📅
+            </div>
+
+            <div>
+                <h2>Deadlines</h2>
+                <div class="small">дедлайны</div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="deadline-form">
+
+        <input
+            id="deadlineName"
+            placeholder="Task name..."
+        >
+
+        <input
+            id="deadlineDate"
+            type="date"
+        >
+
+        <button
+            class="btn primary"
+            onclick="addDeadline()"
+        >
+            + Add
+        </button>
+
+    </div>
+
+    <div
+        class="deadline-list"
+        id="deadlineList"
+    ></div>
+
+</section>
+
+
+<!-- TIMER -->
+
+<section class="card">
+
+    <div class="card-title">
+
+        <div class="title-left">
+
+            <div class="title-icon">
+                ⏱
+            </div>
+
+            <div>
+                <h2>Focus Timer</h2>
+                <div class="small">
+                    фокус без отвлечений
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="timer-box">
+
+        <div id="time">
+            25:00
+        </div>
+
+        <div class="timer-controls">
+
+            <button
+                class="btn primary"
+                onclick="startTimer()"
+            >
+                ▶ Start
+            </button>
+
+            <button
+                class="btn"
+                onclick="pauseTimer()"
+            >
+                Ⅱ Pause
+            </button>
+
+            <button
+                class="btn"
+                onclick="resetTimer()"
+            >
+                ↻ Reset
+            </button>
+
+        </div>
+
+        <div class="timer-settings">
+
+            <input
+                id="timerMinutes"
+                type="number"
+                min="1"
+                max="180"
+                value="25"
+            >
+
+            <button
+                class="btn"
+                onclick="setTimer()"
+            >
+                Set time
+            </button>
+
+        </div>
+
+        <div
+            class="small"
+            style="margin-top:10px"
+        >
+            🔔 Sound plays automatically when finished
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- MUSIC -->
+
+<section class="card">
+
+    <div class="card-title">
+
+        <div class="title-left">
+
+            <div class="title-icon">
+                🎧
+            </div>
+
+            <div>
+                <h2>Focus Music</h2>
+                <div class="small">
+                    музыка для учёбы
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="music-player">
+
+        <div class="music-main">
+
+            <div
+                class="music-art"
+                id="musicArt"
+            >
+                ♪
+            </div>
+
+            <div class="music-info">
+
+                <div
+                    class="music-name"
+                    id="musicName"
+                >
+                    Soft Focus
+                </div>
+
+                <div
+                    class="music-desc"
+                    id="musicDesc"
+                >
+                    warm ambient atmosphere
+                </div>
+
+            </div>
+
+            <div class="music-controls">
+
+                <button
+                    class="icon-btn"
+                    onclick="previousMusic()"
+                >
+                    ‹
+                </button>
+
+                <button
+                    class="icon-btn"
+                    onclick="toggleMusic()"
+                    id="musicPlay"
+                >
+                    ▶
+                </button>
+
+                <button
+                    class="icon-btn"
+                    onclick="nextMusic()"
+                >
+                    ›
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="volume">
+
+            <input
+                id="volumeSlider"
+                type="range"
+                min="0"
+                max="1"
+                step=".01"
+                value=".55"
+            >
+
+        </div>
+
+    </div>
+
+    <div
+        class="small"
+        style="margin-top:10px"
+    >
+        5 calm sounds · 5 спокойных режима
+    </div>
+
+</section>
+
+
+<!-- NOTES -->
+
+<section class="card full">
+
+    <div class="card-title">
+
+        <div class="title-left">
+
+            <div class="title-icon">
+                📝
+            </div>
+
+            <div>
+                <h2>Quick Notes</h2>
+                <div class="small">
+                    заметки
+                </div>
+            </div>
+
+        </div>
+
+        <button
+            class="btn primary"
+            onclick="addNote()"
+        >
+            + New note
+        </button>
+
+    </div>
+
+    <div
+        class="notes-grid"
+        id="notesGrid"
+    ></div>
+
+</section>
+
+</div>
+</div>
+
+
+<script>
+
+/* =========================
+   THEME
+========================= */
+
+function updateThemeButton() {
+
+    const dark =
+        document.body.classList.contains("dark");
+
+    document.getElementById("themeIcon")
+        .textContent = dark ? "☀" : "☾";
+
+    document.getElementById("themeText")
+        .textContent =
+        dark ? "Light mode" : "Dark mode";
+}
+
+function toggleTheme() {
+
+    document.body.classList.toggle("dark");
+
+    localStorage.setItem(
+        "theme",
+        document.body.classList.contains("dark")
+            ? "dark"
+            : "light"
+    );
+
+    updateThemeButton();
+}
+
+if (
+    localStorage.getItem("theme") === "dark"
+) {
+    document.body.classList.add("dark");
+}
+
+updateThemeButton();
+
+
+/* =========================
+   SUBJECTS
+========================= */
+
+let subjects =
+    JSON.parse(
+        localStorage.getItem("subjects") || "[]"
+    );
+
+function saveSubjects() {
+
+    localStorage.setItem(
+        "subjects",
+        JSON.stringify(subjects)
+    );
+}
+
+function renderSubjects() {
+
+    const list =
+        document.getElementById("subjectList");
+
+    list.innerHTML = "";
+
+    if (!subjects.length) {
+
+        list.innerHTML =
+            `<div class="empty">
+                No subjects yet · пока пусто
+            </div>`;
+
+        return;
+    }
+
+    subjects.forEach((subject,index) => {
+
+        const div =
+            document.createElement("div");
+
+        div.className = "subject";
+
+        div.innerHTML = `
+
+            <div class="subject-name">
+                ${escapeHTML(subject)}
+            </div>
+
+            <div class="subject-actions">
+
+                <button
+                    class="btn"
+                    onclick="editSubject(${index})"
+                >
+                    Edit
+                </button>
+
+                <button
+                    class="btn danger"
+                    onclick="deleteSubject(${index})"
+                >
+                    Delete
+                </button>
+
+            </div>
+        `;
+
+        list.appendChild(div);
+    });
+}
+
+function addSubject() {
+
+    const input =
+        document.getElementById("subjectInput");
+
+    const value =
+        input.value.trim();
+
+    if (!value) return;
+
+    subjects.push(value);
+
+    input.value = "";
+
+    saveSubjects();
+    renderSubjects();
+}
+
+function editSubject(index) {
+
+    const value =
+        prompt(
+            "Edit subject:",
+            subjects[index]
+        );
+
+    if (value === null) return;
+
+    const clean =
+        value.trim();
+
+    if (!clean) return;
+
+    subjects[index] = clean;
+
+    saveSubjects();
+    renderSubjects();
+}
+
+function deleteSubject(index) {
+
+    subjects.splice(index,1);
+
+    saveSubjects();
+    renderSubjects();
+}
+
+
+/* =========================
+   DEADLINES
+========================= */
+
+let deadlines =
+    JSON.parse(
+        localStorage.getItem("deadlines") || "[]"
+    );
+
+function saveDeadlines() {
+
+    localStorage.setItem(
+        "deadlines",
+        JSON.stringify(deadlines)
+    );
+}
+
+function formatDate(dateString) {
+
+    const date =
+        new Date(dateString + "T00:00:00");
+
+    return date.toLocaleDateString(
+        "en-GB",
+        {
+            day:"2-digit",
+            month:"short",
+            year:"numeric"
+        }
+    );
+}
+
+function getDeadlineStatus(
+    dateString,
+    completed
+) {
+
+    if (completed) {
+
+        return {
+            text:"Completed",
+            className:"done"
+        };
+    }
+
+    const today =
+        new Date();
+
+    today.setHours(0,0,0,0);
+
+    const date =
+        new Date(
+            dateString + "T00:00:00"
+        );
+
+    date.setHours(0,0,0,0);
+
+    const diff =
+        Math.round(
+            (date-today)/86400000
+        );
+
+    if (diff < 0) {
+
+        return {
+            text:"Overdue",
+            className:"overdue"
+        };
+    }
+
+    if (diff === 0) {
+
+        return {
+            text:"Today",
+            className:"today"
+        };
+    }
+
+    if (diff === 1) {
+
+        return {
+            text:"Tomorrow",
+            className:""
+        };
+    }
+
+    return {
+        text:`In ${diff} days`,
+        className:""
+    };
+}
+
+function renderDeadlines() {
+
+    const list =
+        document.getElementById("deadlineList");
+
+    list.innerHTML = "";
+
+    if (!deadlines.length) {
+
+        list.innerHTML =
+            `<div class="empty">
+                No deadlines · пока дедлайнов нет
+            </div>`;
+
+        return;
+    }
+
+    deadlines.sort(
+        (a,b) =>
+            new Date(a.date)-new Date(b.date)
+    );
+
+    deadlines.forEach(
+        (deadline,index) => {
+
+            const status =
+                getDeadlineStatus(
+                    deadline.date,
+                    deadline.completed
+                );
+
+            const div =
+                document.createElement("div");
+
+            div.className =
+                "deadline " +
+                (
+                    deadline.completed
+                        ? "completed"
+                        : ""
+                );
+
+            div.innerHTML = `
+
+                <input
+                    class="deadline-check"
+                    type="checkbox"
+                    ${deadline.completed ? "checked" : ""}
+                    onchange="toggleDeadline(${index})"
+                >
+
+                <div class="deadline-info">
+
+                    <div class="deadline-name">
+                        ${escapeHTML(deadline.name)}
+                    </div>
+
+                    <div class="deadline-date">
+                        ${formatDate(deadline.date)}
+                    </div>
+
+                </div>
+
+                <div
+                    class="deadline-status ${status.className}"
+                >
+                    ${status.text}
+                </div>
+
+                <button
+                    class="btn danger"
+                    onclick="deleteDeadline(${index})"
+                >
+                    ×
+                </button>
+
+            `;
+
+            list.appendChild(div);
+        }
+    );
+}
+
+function addDeadline() {
+
+    const name =
+        document.getElementById("deadlineName")
+            .value.trim();
+
+    const date =
+        document.getElementById("deadlineDate")
+            .value;
+
+    if (!name || !date) return;
+
+    deadlines.push({
+        name:name,
+        date:date,
+        completed:false
+    });
+
+    document.getElementById(
+        "deadlineName"
+    ).value = "";
+
+    document.getElementById(
+        "deadlineDate"
+    ).value = "";
+
+    saveDeadlines();
+    renderDeadlines();
+}
+
+function toggleDeadline(index) {
+
+    deadlines[index].completed =
+        !deadlines[index].completed;
+
+    saveDeadlines();
+    renderDeadlines();
+}
+
+function deleteDeadline(index) {
+
+    deadlines.splice(index,1);
+
+    saveDeadlines();
+    renderDeadlines();
+}
+
+
+/* =========================
+   TIMER
+========================= */
+
+let seconds = 25*60;
+let timer = null;
+
+function updateTimer() {
+
+    const minutes =
+        Math.floor(seconds/60);
+
+    const secs =
+        seconds%60;
+
+    document.getElementById("time")
+        .textContent =
+        `${String(minutes).padStart(2,"0")}:${String(secs).padStart(2,"0")}`;
+}
+
+function startTimer() {
+
+    if (timer) return;
+
+    getAudioContext();
+
+    timer =
+        setInterval(() => {
+
+            if (seconds <= 0) {
+
+                clearInterval(timer);
+                timer = null;
+
+                /*
+                    IMPORTANT:
+                    Sound starts immediately.
+                    No alert anymore.
+                */
+
+                playTimerSound();
+
+                document.body
+                    .classList.add("timer-finished");
+
+                setTimeout(() => {
+
+                    document.body
+                        .classList.remove(
+                            "timer-finished"
+                        );
+
+                },2500);
+
+                return;
+            }
+
+            seconds--;
+
+            updateTimer();
+
+        },1000);
+}
+
+function pauseTimer() {
+
+    if (!timer) return;
+
+    clearInterval(timer);
+    timer = null;
+}
+
+function resetTimer() {
+
+    pauseTimer();
+
+    seconds =
+        Number(
+            document.getElementById(
+                "timerMinutes"
+            ).value
+        )*60;
+
+    updateTimer();
+}
+
+function setTimer() {
+
+    pauseTimer();
+
+    const minutes =
+        Number(
+            document.getElementById(
+                "timerMinutes"
+            ).value
+        );
+
+    if (!minutes || minutes < 1) return;
+
+    seconds =
+        minutes*60;
+
+    updateTimer();
+}
+
+updateTimer();
+
+
+/* =========================
+   AUDIO ENGINE
+========================= */
+
+let audioContext = null;
+
+function getAudioContext() {
+
+    if (!audioContext) {
+
+        audioContext =
+            new (
+                window.AudioContext ||
+                window.webkitAudioContext
+            )();
+    }
+
+    if (audioContext.state === "suspended") {
+        audioContext.resume();
+    }
+
+    return audioContext;
+}
+
+
+/* =========================
+   TIMER FINISH SOUND
+========================= */
+
+function playTimerSound() {
+
+    const ctx =
+        getAudioContext();
+
+    const now =
+        ctx.currentTime;
+
+    /*
+        Louder and longer chime.
+    */
+
+    const notes = [
+        {freq:523.25,time:0},
+        {freq:659.25,time:.22},
+        {freq:783.99,time:.44},
+        {freq:1046.50,time:.66}
+    ];
+
+    notes.forEach(note => {
+
+        const osc =
+            ctx.createOscillator();
+
+        const gain =
+            ctx.createGain();
+
+        osc.type = "sine";
+        osc.frequency.value =
+            note.freq;
+
+        gain.gain.setValueAtTime(
+            0,
+            now + note.time
+        );
+
+        gain.gain.linearRampToValueAtTime(
+            .38,
+            now + note.time + .04
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            .001,
+            now + note.time + 1.3
+        );
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(
+            now + note.time
+        );
+
+        osc.stop(
+            now + note.time + 1.3
+        );
+    });
+}
+
+
+/* =========================
+   FOCUS MUSIC
+========================= */
+
+/* =========================
+   FOCUS MUSIC
+========================= */
+
+/*
+    Положи 5 mp3-файлов сюда:
+
+    твой-проект/
+    ├── index.html
+    └── music/
+        ├── track1.mp3
+        ├── track2.mp3
+        ├── track3.mp3
+        ├── track4.mp3
+        └── track5.mp3
+
+    Либо измени file ниже
+    под свои реальные названия.
+*/
+
+const musicTracks = [
+
+    {
+        name: "Campfire Guitar",
+        desc: "quiet acoustic guitar · спокойная гитара",
+        file: "jessequinn-peaceful-serenade-guitar-instrumental-by-jesse-quinn-163655.mp3"
+    },
+
+    {
+        name: "Nature Flow",
+        desc: "nature and relaxing melody · природа и мелодия",
+        file: "andriig-relaxing-relaxing-music-487214.mp3"
+    },
+
+    {
+        name: "Night Study",
+        desc: "calm music for late studying · ночной фокус",
+        file: "mixkit-relaxation-05-749.mp3"
+    },
+
+    {
+        name: "Dreamy Lo-Fi",
+        desc: "soft lo-fi atmosphere · мягкий фон",
+        file: "the_mountain-forest-163871.mp3"
+    },
+
+    {
+        name: "Quiet Evening",
+        desc: "warm relaxing background · спокойный вечер",
+        file: "mixkit-serene-view-443.mp3"
+    }
+
+];
+
+
+let musicIndex = 0;
+let musicPlaying = false;
+
+
+/*
+    Один настоящий HTML Audio Player.
+    Все 5 треков воспроизводятся через него.
+*/
+
+const musicAudio = new Audio();
+
+musicAudio.loop = true;
+musicAudio.preload = "auto";
+musicAudio.volume = 0.55;
+
+
+/* =========================
+   LOAD TRACK
+========================= */
+
+function loadMusic() {
+
+    const track =
+        musicTracks[musicIndex];
+
+    /*
+        Останавливаем предыдущий трек
+    */
+
+    musicAudio.pause();
+
+    musicAudio.currentTime = 0;
+
+    /*
+        Загружаем новый mp3
+    */
+
+    musicAudio.src = track.file;
+
+    musicAudio.load();
+
+
+    /*
+        Обновляем название
+    */
+
+    document.getElementById(
+        "musicName"
+    ).textContent =
+        track.name;
+
+
+    document.getElementById(
+        "musicDesc"
+    ).textContent =
+        track.desc;
+}
+
+
+/* =========================
+   PLAY
+========================= */
+
+async function playMusic() {
+
+    try {
+
+        await musicAudio.play();
+
+        musicPlaying = true;
+
+        document.getElementById(
+            "musicPlay"
+        ).textContent = "Ⅱ";
+
+
+        document.getElementById(
+            "musicArt"
+        ).classList.add(
+            "playing"
+        );
+
+    }
+
+    catch(error) {
+
+        console.error(
+            "Music could not play:",
+            error
+        );
+
+        musicPlaying = false;
+
+        document.getElementById(
+            "musicPlay"
+        ).textContent = "▶";
+
+
+        document.getElementById(
+            "musicArt"
+        ).classList.remove(
+            "playing"
+        );
+
+
+        document.getElementById(
+            "musicDesc"
+        ).textContent =
+            "Track not found · проверь файл в папке music";
+    }
+}
+
+
+/* =========================
+   PAUSE
+========================= */
+
+function pauseMusic() {
+
+    musicAudio.pause();
+
+    musicPlaying = false;
+
+
+    document.getElementById(
+        "musicPlay"
+    ).textContent = "▶";
+
+
+    document.getElementById(
+        "musicArt"
+    ).classList.remove(
+        "playing"
+    );
+}
+
+
+/* =========================
+   PLAY / PAUSE BUTTON
+========================= */
+
+function toggleMusic() {
+
+    if (musicPlaying) {
+
+        pauseMusic();
+
+    }
+
+    else {
+
+        playMusic();
+
+    }
+}
+
+
+/* =========================
+   NEXT TRACK
+========================= */
+
+function nextMusic() {
+
+    const wasPlaying =
+        musicPlaying;
+
+
+    musicIndex =
+        (musicIndex + 1) %
+        musicTracks.length;
+
+
+    loadMusic();
+
+
+    if (wasPlaying) {
+
+        playMusic();
+
+    }
+
+    else {
+
+        document.getElementById(
+            "musicPlay"
+        ).textContent = "▶";
+
+    }
+}
+
+
+/* =========================
+   PREVIOUS TRACK
+========================= */
+
+function previousMusic() {
+
+    const wasPlaying =
+        musicPlaying;
+
+
+    musicIndex =
+        (
+            musicIndex -
+            1 +
+            musicTracks.length
+        ) %
+        musicTracks.length;
+
+
+    loadMusic();
+
+
+    if (wasPlaying) {
+
+        playMusic();
+
+    }
+
+    else {
+
+        document.getElementById(
+            "musicPlay"
+        ).textContent = "▶";
+
+    }
+}
+
+
+/* =========================
+   VOLUME
+========================= */
+
+document.getElementById(
+    "volumeSlider"
+).addEventListener(
+    "input",
+    function() {
+
+        musicAudio.volume =
+            Number(this.value);
+
+    }
+);
+
+
+/* =========================
+   MUSIC ERRORS
+========================= */
+
+musicAudio.addEventListener(
+    "error",
+    function() {
+
+        console.error(
+            "Audio file not found:",
+            musicAudio.src
+        );
+
+
+        document.getElementById(
+            "musicDesc"
+        ).textContent =
+            "File not found · проверь название mp3";
+
+    }
+);
+
+
+/* =========================
+   INITIAL MUSIC LOAD
+========================= */
+
+loadMusic();
+
+/* =========================
+   NOTES
+========================= */
+
+let notes =
+    JSON.parse(
+        localStorage.getItem(
+            "studentNotesV2"
+        ) || "[]"
+    );
+
+function saveNotes() {
+
+    localStorage.setItem(
+        "studentNotesV2",
+        JSON.stringify(notes)
+    );
+}
+
+function addNote() {
+
+    notes.unshift({
+
+        id:Date.now(),
+
+        title:"New note",
+
+        text:"",
+
+        image:null,
+
+        imageX:25,
+
+        imageY:110,
+
+        imageWidth:150
+
+    });
+
+    saveNotes();
+    renderNotes();
+}
+
+function deleteNote(id) {
+
+    notes =
+        notes.filter(
+            note => note.id !== id
+        );
+
+    saveNotes();
+    renderNotes();
+}
+
+function updateNote(
+    id,
+    field,
+    value
+) {
+
+    const note =
+        notes.find(
+            note => note.id === id
+        );
+
+    if (!note) return;
+
+    note[field] = value;
+
+    saveNotes();
+}
+
+
+/* =========================
+   NOTES RENDER
+========================= */
+
+function renderNotes() {
+
+    const grid =
+        document.getElementById(
+            "notesGrid"
+        );
+
+    grid.innerHTML = "";
+
+    if (!notes.length) {
+
+        grid.innerHTML = `
+            <div
+                class="empty"
+                style="grid-column:1/-1"
+            >
+                No notes yet · создай первую заметку
+            </div>
+        `;
+
+        return;
+    }
+
+    notes.forEach(note => {
+
+        const div =
+            document.createElement("div");
+
+        div.className = "note";
+
+        /*
+            Convert old notes to new position
+            system if necessary.
+        */
+
+        if (note.imageX === undefined) {
+            note.imageX = 25;
+        }
+
+        if (note.imageY === undefined) {
+            note.imageY = 110;
+        }
+
+        if (note.imageWidth === undefined) {
+            note.imageWidth = 150;
+        }
+
+        div.innerHTML = `
+
+            <div class="note-header">
+
+                <input
+                    class="note-title"
+                    value="${escapeAttribute(note.title)}"
+                    placeholder="Note title..."
+                    onchange="
+                        updateNote(
+                            ${note.id},
+                            'title',
+                            this.value
+                        )
+                    "
+                >
+
+                <button
+                    class="btn danger"
+                    onclick="
+                        deleteNote(${note.id})
+                    "
+                >
+                    ×
+                </button>
+
+            </div>
+
+            <textarea
+                class="note-text"
+                placeholder="Write something..."
+                oninput="
+                    updateNote(
+                        ${note.id},
+                        'text',
+                        this.value
+                    )
+                "
+            >${escapeHTML(note.text)}</textarea>
+
+            ${
+                note.image
+                ?
+                `
+                    <div
+                        class="note-image-wrap"
+                        id="image-${note.id}"
+                        style="
+                            left:${note.imageX}px;
+                            top:${note.imageY}px;
+                            width:${note.imageWidth}px;
+                        "
+                        onmousedown="
+                            startImageMove(
+                                event,
+                                ${note.id}
+                            )
+                        "
+                    >
+
+                        <img
+                            class="note-image"
+                            src="${note.image}"
+                        >
+
+                        <button
+                            class="image-delete"
+                            onclick="
+                                event.stopPropagation();
+                                removeImage(${note.id})
+                            "
+                        >
+                            ×
+                        </button>
+
+                        <div class="image-hint">
+                            drag me
+                        </div>
+
+                    </div>
+                `
+                :
+                `
+                    <div
+                        class="note-drop"
+                        ondragover="
+                            allowImageDrop(event)
+                        "
+                        ondragleave="
+                            leaveImageDrop(event)
+                        "
+                        ondrop="
+                            dropImage(
+                                event,
+                                ${note.id}
+                            )
+                        "
+                    >
+
+                        Drop image here
+                        · перетащи картинку сюда
+
+                        <br><br>
+
+                        <button
+                            class="btn"
+                            onclick="
+                                document
+                                .getElementById(
+                                    'file-${note.id}'
+                                )
+                                .click()
+                            "
+                        >
+                            Choose image
+                        </button>
+
+                        <input
+                            class="note-file"
+                            id="file-${note.id}"
+                            type="file"
+                            accept="image/*"
+                            onchange="
+                                uploadNoteImage(
+                                    event,
+                                    ${note.id}
+                                )
+                            "
+                        >
+
+                    </div>
+                `
+            }
+        `;
+
+        grid.appendChild(div);
+    });
+
+    saveNotes();
+}
+
+
+/* =========================
+   IMAGE DROP
+========================= */
+
+function allowImageDrop(event) {
+
+    event.preventDefault();
+
+    event.currentTarget
+        .classList.add("dragover");
+}
+
+function leaveImageDrop(event) {
+
+    event.currentTarget
+        .classList.remove("dragover");
+}
+
+function dropImage(
+    event,
+    id
+) {
+
+    event.preventDefault();
+
+    event.currentTarget
+        .classList.remove("dragover");
+
+    const files =
+        event.dataTransfer.files;
+
+    if (!files || !files.length) {
+        return;
+    }
+
+    handleImageFile(
+        files[0],
+        id
+    );
+}
+
+function uploadNoteImage(
+    event,
+    id
+) {
+
+    const file =
+        event.target.files[0];
+
+    if (!file) return;
+
+    handleImageFile(
+        file,
+        id
+    );
+}
+
+function handleImageFile(
+    file,
+    id
+) {
+
+    if (!file.type.startsWith("image/")) {
+        return;
+    }
+
+    const reader =
+        new FileReader();
+
+    reader.onload = function(e) {
+
+        const note =
+            notes.find(
+                n => n.id === id
+            );
+
+        if (!note) return;
+
+        note.image =
+            e.target.result;
+
+        note.imageX = 25;
+        note.imageY = 110;
+        note.imageWidth = 150;
+
+        saveNotes();
+        renderNotes();
+    };
+
+    reader.readAsDataURL(file);
+}
+
+function removeImage(id) {
+
+    const note =
+        notes.find(
+            n => n.id === id
+        );
+
+    if (!note) return;
+
+    note.image = null;
+
+    saveNotes();
+    renderNotes();
+}
+
+
+/* =========================
+   FREE IMAGE MOVEMENT
+========================= */
+
+let movingImage = null;
+
+function startImageMove(
+    event,
+    noteId
+) {
+
+    /*
+        Only left mouse button.
+    */
+
+    if (event.button !== 0) {
+        return;
+    }
+
+    /*
+        Don't start movement when
+        clicking delete.
+    */
+
+    if (
+        event.target.classList.contains(
+            "image-delete"
+        )
+    ) {
+        return;
+    }
+
+    const note =
+        notes.find(
+            n => n.id === noteId
+        );
+
+    if (!note) return;
+
+    const image =
+        document.getElementById(
+            "image-" + noteId
+        );
+
+    const noteElement =
+        image.parentElement;
+
+    const noteRect =
+        noteElement.getBoundingClientRect();
+
+    const imageRect =
+        image.getBoundingClientRect();
+
+    movingImage = {
+
+        noteId:noteId,
+
+        noteElement:noteElement,
+
+        image:image,
+
+        offsetX:
+            event.clientX -
+            imageRect.left,
+
+        offsetY:
+            event.clientY -
+            imageRect.top,
+
+        noteLeft:
+            noteRect.left,
+
+        noteTop:
+            noteRect.top
+    };
+
+    document.addEventListener(
+        "mousemove",
+        moveImage
+    );
+
+    document.addEventListener(
+        "mouseup",
+        stopImageMove
+    );
+
+    event.preventDefault();
+}
+
+function moveImage(event) {
+
+    if (!movingImage) return;
+
+    const note =
+        notes.find(
+            n =>
+                n.id ===
+                movingImage.noteId
+        );
+
+    if (!note) return;
+
+    const noteRect =
+        movingImage.noteElement
+            .getBoundingClientRect();
+
+    let x =
+        event.clientX -
+        noteRect.left -
+        movingImage.offsetX;
+
+    let y =
+        event.clientY -
+        noteRect.top -
+        movingImage.offsetY;
+
+    /*
+        Allow the image to move
+        almost anywhere inside note.
+
+        It can overlap text.
+    */
+
+    const imageWidth =
+        movingImage.image.offsetWidth;
+
+    const imageHeight =
+        movingImage.image.offsetHeight;
+
+    const maxX =
+        noteRect.width -
+        imageWidth;
+
+    const maxY =
+        noteRect.height -
+        imageHeight;
+
+    /*
+        Keep it inside the note,
+        but don't restrict its position
+        to a special "image zone".
+    */
+
+    x =
+        Math.max(
+            -5,
+            Math.min(x,maxX+5)
+        );
+
+    y =
+        Math.max(
+            -5,
+            Math.min(y,maxY+5)
+        );
+
+    movingImage.image.style.left =
+        x + "px";
+
+    movingImage.image.style.top =
+        y + "px";
+
+    note.imageX = x;
+    note.imageY = y;
+}
+
+function stopImageMove() {
+
+    if (!movingImage) return;
+
+    saveNotes();
+
+    movingImage = null;
+
+    document.removeEventListener(
+        "mousemove",
+        moveImage
+    );
+
+    document.removeEventListener(
+        "mouseup",
+        stopImageMove
+    );
+}
+
+
+/* =========================
+   UTILITY
+========================= */
+
+function escapeHTML(value) {
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+function escapeAttribute(value) {
+
+    return escapeHTML(value);
+}
+
+
+/* =========================
+   INITIALIZATION
+========================= */
+
+renderSubjects();
+renderDeadlines();
+renderNotes();
+updateMusicInfo();
+
+
+/* Space = timer */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.code === "Space" &&
+            event.target.tagName !== "INPUT" &&
+            event.target.tagName !== "TEXTAREA"
+        ) {
+
+            event.preventDefault();
+
+            if (timer) {
+                pauseTimer();
+            } else {
+                startTimer();
+            }
+        }
+    }
+);
+
+</script>
+
+</body>
+</html>
