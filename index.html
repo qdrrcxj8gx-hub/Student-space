@@ -341,9 +341,73 @@ textarea {
 
 .deadline-form {
     display:grid;
-    grid-template-columns:1fr 150px 120px auto;
-    gap:9px;
+    grid-template-columns:minmax(220px,1.5fr) 170px 250px auto;
+    gap:12px;
     margin-bottom:15px;
+    align-items:center;
+}
+
+.time-picker {
+    height:46px;
+    display:flex;
+    align-items:center;
+
+    padding:0 10px;
+
+    border:1px solid var(--border);
+    border-radius:13px;
+
+    background:rgba(255,255,255,.38);
+
+    transition:.2s ease;
+}
+
+.dark .time-picker {
+    background:rgba(255,255,255,.06);
+}
+
+.time-picker:focus-within {
+    border-color:#a78bfa;
+    box-shadow:0 0 0 3px rgba(139,92,246,.10);
+}
+
+.time-picker select {
+    width:auto;
+    height:100%;
+
+    padding:0 5px;
+
+    border:none;
+    border-radius:0;
+
+    background:transparent;
+    box-shadow:none;
+
+    font-size:13px;
+    text-align:center;
+}
+
+.time-picker select:focus {
+    border:none;
+    box-shadow:none;
+}
+
+#deadlineHour {
+    width:55px;
+}
+
+#deadlineMinute {
+    width:55px;
+}
+
+#deadlinePeriod {
+    width:65px;
+}
+
+.time-picker span {
+    color:var(--muted);
+    font-weight:600;
+    padding:0 2px;
 }
 
 .deadline-list {
@@ -984,10 +1048,47 @@ textarea {
         type="date"
     >
 
-    <input
-        id="deadlineTime"
-        type="time"
-    >
+    <div class="time-picker">
+
+    <select id="deadlineHour">
+        <option value="">Hour</option>
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+        <option>6</option>
+        <option>7</option>
+        <option>8</option>
+        <option>9</option>
+        <option>10</option>
+        <option>11</option>
+        <option>12</option>
+    </select>
+
+    <span>:</span>
+
+    <select id="deadlineMinute">
+        <option value="00">00</option>
+        <option value="05">05</option>
+        <option value="10">10</option>
+        <option value="15">15</option>
+        <option value="20">20</option>
+        <option value="25">25</option>
+        <option value="30">30</option>
+        <option value="35">35</option>
+        <option value="40">40</option>
+        <option value="45">45</option>
+        <option value="50">50</option>
+        <option value="55">55</option>
+    </select>
+
+    <select id="deadlinePeriod">
+        <option value="PM">PM</option>
+        <option value="AM">AM</option>
+    </select>
+
+</div>
 
     <button
         class="btn primary"
@@ -1583,11 +1684,24 @@ function addDeadline() {
         document.getElementById("deadlineDate")
             .value;
 
-    const time =
-        document.getElementById("deadlineTime")
+    const hour =
+        document.getElementById("deadlineHour")
+            .value;
+
+    const minute =
+        document.getElementById("deadlineMinute")
+            .value;
+
+    const period =
+        document.getElementById("deadlinePeriod")
             .value;
 
     if (!name || !date) return;
+
+    const time =
+        hour
+            ? `${hour}:${minute} ${period}`
+            : "";
 
     deadlines.push({
         name:name,
@@ -1598,7 +1712,10 @@ function addDeadline() {
 
     document.getElementById("deadlineName").value = "";
     document.getElementById("deadlineDate").value = "";
-    document.getElementById("deadlineTime").value = "";
+
+    document.getElementById("deadlineHour").value = "";
+    document.getElementById("deadlineMinute").value = "00";
+    document.getElementById("deadlinePeriod").value = "PM";
 
     saveDeadlines();
     renderDeadlines();
@@ -2968,10 +3085,12 @@ document.getElementById("subjectInput")
             addSubject();
         }
     });
-    [
+[
     "deadlineName",
     "deadlineDate",
-    "deadlineTime"
+    "deadlineHour",
+    "deadlineMinute",
+    "deadlinePeriod"
 ].forEach(id => {
 
     document.getElementById(id)
