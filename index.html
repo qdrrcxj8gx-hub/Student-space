@@ -604,31 +604,46 @@ textarea {
 .note-text {
     position:relative;
     z-index:5;
+
     min-height:170px;
+    height:auto;
+
     background:transparent;
     border:none;
+
     padding:8px 5px;
+
     line-height:1.5;
+
     resize:none;
+    overflow:hidden;
 }
 
 .note-drop {
-    position:absolute;
-    left:17px;
-    right:17px;
-    bottom:17px;
-    min-height:55px;
+    position:relative;
+    width:100%;
+    min-height:90px;
+
+    margin-top:14px;
+    padding:14px;
+
     border:1.5px dashed rgba(139,92,246,.35);
-    border-radius:14px;
+    border-radius:16px;
+
     display:flex;
+    flex-direction:column;
     align-items:center;
     justify-content:center;
+    gap:10px;
+
     text-align:center;
+
     color:var(--muted);
     font-size:11px;
-    padding:8px;
+
     transition:.2s ease;
-    z-index:2;
+
+    z-index:6;
 }
 
 .note-drop.dragover {
@@ -661,7 +676,7 @@ textarea {
 .note-image {
     display:block;
     width:100%;
-    max-height:220px;
+    height:auto;
     object-fit:contain;
     border-radius:13px;
     box-shadow:0 12px 30px rgba(30,40,70,.22);
@@ -2294,12 +2309,15 @@ function renderNotes() {
                 class="note-text"
                 placeholder="Write something..."
                 oninput="
-                    updateNote(
-                        ${note.id},
-                        'text',
-                        this.value
-                    )
-                "
+    updateNote(
+        ${note.id},
+        'text',
+        this.value
+    );
+    autoResizeTextarea(this);
+    resizeNoteForContent(${note.id});
+"
+
             >${escapeHTML(note.text)}</textarea>
 
             ${
@@ -2408,6 +2426,12 @@ function renderNotes() {
 
         grid.appendChild(div);
     });
+
+resizeAllNoteTextareas();
+
+notes.forEach(note => {
+    resizeNoteForContent(note.id);
+});
 
     saveNotes();
 }
@@ -2684,6 +2708,10 @@ function moveImage(event) {
 
     note.imageX = x;
     note.imageY = y;
+
+    resizeNoteForContent(
+    movingImage.noteId
+);
 }
 
 function stopImageMove() {
@@ -2778,17 +2806,29 @@ function resizeImage(event) {
         Minimum / maximum size
     */
 
-    newWidth =
-        Math.max(
-            70,
-            Math.min(newWidth,500)
-        );
+    const noteWidth =
+    resizingImage.image
+        .parentElement
+        .offsetWidth;
+
+newWidth =
+    Math.max(
+        70,
+        Math.min(
+            newWidth,
+            noteWidth - 25
+        )
+    );
 
     resizingImage.image.style.width =
         newWidth + "px";
 
     note.imageWidth =
         newWidth;
+
+        resizeNoteForContent(
+    resizingImage.noteId
+);
 }
 
 
@@ -2809,6 +2849,58 @@ function stopImageResize() {
         "mouseup",
         stopImageResize
     );
+}
+
+/* =========================
+   AUTO NOTE SIZE
+========================= */
+
+function autoResizeTextarea(textarea) {
+
+    textarea.style.height = "auto";
+
+    textarea.style.height =
+        textarea.scrollHeight + "px";
+}
+
+
+function resizeNoteForContent(noteId) {
+
+    const image =
+        document.getElementById(
+            "image-" + noteId
+        );
+
+    if (!image) return;
+
+    const noteElement =
+        image.parentElement;
+
+    const imageBottom =
+        image.offsetTop +
+        image.offsetHeight +
+        30;
+
+    if (
+        imageBottom >
+        noteElement.offsetHeight
+    ) {
+
+        noteElement.style.minHeight =
+            imageBottom + "px";
+    }
+}
+
+
+function resizeAllNoteTextareas() {
+
+    document
+        .querySelectorAll(".note-text")
+        .forEach(textarea => {
+
+            autoResizeTextarea(textarea);
+
+        });
 }
 
 /* =========================
