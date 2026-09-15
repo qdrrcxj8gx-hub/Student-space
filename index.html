@@ -341,7 +341,7 @@ textarea {
 
 .deadline-form {
     display:grid;
-    grid-template-columns:1fr 160px auto;
+    grid-template-columns:1fr 150px 120px auto;
     gap:9px;
     margin-bottom:15px;
 }
@@ -648,7 +648,6 @@ textarea {
     position:absolute;
     width:150px;
     min-width:60px;
-    max-width:70%;
     cursor:grab;
     z-index:8;
     user-select:none;
@@ -702,6 +701,54 @@ textarea {
     opacity:0;
     transition:.2s ease;
     pointer-events:none;
+}
+
+.image-resize {
+    position:absolute;
+    right:-7px;
+    bottom:-7px;
+
+    width:20px;
+    height:20px;
+
+    border-radius:7px;
+
+    background:rgba(255,255,255,.92);
+    border:1px solid rgba(139,92,246,.35);
+
+    box-shadow:0 4px 12px rgba(30,40,70,.18);
+
+    cursor:nwse-resize;
+
+    z-index:30;
+
+    opacity:0;
+
+    transition:
+        opacity .2s ease,
+        transform .2s ease;
+}
+
+.note-image-wrap:hover .image-resize {
+    opacity:1;
+}
+
+.image-resize:hover {
+    transform:scale(1.15);
+}
+
+.image-resize::after {
+    content:"";
+    position:absolute;
+
+    width:6px;
+    height:6px;
+
+    right:4px;
+    bottom:4px;
+
+    border-right:2px solid var(--purple);
+    border-bottom:2px solid var(--purple);
 }
 
 .note-image-wrap:hover .image-hint {
@@ -912,24 +959,29 @@ textarea {
 
     <div class="deadline-form">
 
-        <input
-            id="deadlineName"
-            placeholder="Task name..."
-        >
+    <input
+        id="deadlineName"
+        placeholder="Task name..."
+    >
 
-        <input
-            id="deadlineDate"
-            type="date"
-        >
+    <input
+        id="deadlineDate"
+        type="date"
+    >
 
-        <button
-            class="btn primary"
-            onclick="addDeadline()"
-        >
-            + Add
-        </button>
+    <input
+        id="deadlineTime"
+        type="time"
+    >
 
-    </div>
+    <button
+        class="btn primary"
+        onclick="addDeadline()"
+    >
+        + Add
+    </button>
+
+</div>
 
     <div
         class="deadline-list"
@@ -1481,6 +1533,7 @@ function renderDeadlines() {
 
                     <div class="deadline-date">
                         ${formatDate(deadline.date)}
+                        ${deadline.time ? " · " + deadline.time : ""}
                     </div>
 
                 </div>
@@ -1515,21 +1568,22 @@ function addDeadline() {
         document.getElementById("deadlineDate")
             .value;
 
+    const time =
+        document.getElementById("deadlineTime")
+            .value;
+
     if (!name || !date) return;
 
     deadlines.push({
         name:name,
         date:date,
+        time:time,
         completed:false
     });
 
-    document.getElementById(
-        "deadlineName"
-    ).value = "";
-
-    document.getElementById(
-        "deadlineDate"
-    ).value = "";
+    document.getElementById("deadlineName").value = "";
+    document.getElementById("deadlineDate").value = "";
+    document.getElementById("deadlineTime").value = "";
 
     saveDeadlines();
     renderDeadlines();
@@ -2286,6 +2340,15 @@ function renderNotes() {
                         <div class="image-hint">
                             drag me
                         </div>
+                        <div
+                            class="image-resize"
+                            onmousedown="
+                                startImageResize(
+                                    event,
+                                    ${note.id}
+                                )
+                            "
+                        ></div>
 
                     </div>
                 `
@@ -2642,6 +2705,111 @@ function stopImageMove() {
     );
 }
 
+/* =========================
+   IMAGE RESIZE
+========================= */
+
+let resizingImage = null;
+
+function startImageResize(event, noteId) {
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const note =
+        notes.find(
+            n => n.id === noteId
+        );
+
+    if (!note) return;
+
+    const image =
+        document.getElementById(
+            "image-" + noteId
+        );
+
+    if (!image) return;
+
+    resizingImage = {
+
+        noteId:noteId,
+
+        image:image,
+
+        startX:event.clientX,
+
+        startWidth:
+            image.offsetWidth
+    };
+
+    document.addEventListener(
+        "mousemove",
+        resizeImage
+    );
+
+    document.addEventListener(
+        "mouseup",
+        stopImageResize
+    );
+}
+
+
+function resizeImage(event) {
+
+    if (!resizingImage) return;
+
+    const note =
+        notes.find(
+            n => n.id ===
+            resizingImage.noteId
+        );
+
+    if (!note) return;
+
+    const difference =
+        event.clientX -
+        resizingImage.startX;
+
+    let newWidth =
+        resizingImage.startWidth +
+        difference;
+
+    /*
+        Minimum / maximum size
+    */
+
+    newWidth =
+        Math.max(
+            70,
+            Math.min(newWidth,500)
+        );
+
+    resizingImage.image.style.width =
+        newWidth + "px";
+
+    note.imageWidth =
+        newWidth;
+}
+
+
+function stopImageResize() {
+
+    if (!resizingImage) return;
+
+    saveNotes();
+
+    resizingImage = null;
+
+    document.removeEventListener(
+        "mousemove",
+        resizeImage
+    );
+
+    document.removeEventListener(
+        "mouseup",
+        stopImageResize
+    );
+}
 
 /* =========================
    UTILITY
@@ -2696,6 +2864,33 @@ document.addEventListener(
     }
 );
 
+/* =========================
+   ENTER SHORTCUTS
+========================= */
+
+document.getElementById("subjectInput")
+    .addEventListener("keydown", function(event) {
+
+        if (event.key === "Enter") {
+            event.preventDefault();
+            addSubject();
+        }
+    });
+    [
+    "deadlineName",
+    "deadlineDate",
+    "deadlineTime"
+].forEach(id => {
+
+    document.getElementById(id)
+        .addEventListener("keydown", function(event) {
+
+            if (event.key === "Enter") {
+                event.preventDefault();
+                addDeadline();
+            }
+        });
+});
 </script>
 
 </body>
